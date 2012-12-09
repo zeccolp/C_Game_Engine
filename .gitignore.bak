@@ -7,3 +7,9 @@
 #since it's generated on
 #each computer
 ipch/
+
+#ignore the debug folder
+#since it's generated on
+#each computer
+*Debug/
+*debug/
