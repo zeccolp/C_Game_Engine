@@ -9,7 +9,7 @@
 
 int main()
 {
-	std::cout << "Test";
+	std::cout << "Test" << std::endl;
 
 #if DEBUG
 	system("pause");
