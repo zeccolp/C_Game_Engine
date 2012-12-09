@@ -1,0 +1,9 @@
+#ignore the opensdf file
+#if the solution happens
+#to be open
+*.opensdf
+
+#ignore the ipch folder
+#since it's generated on
+#each computer
+ipch/
