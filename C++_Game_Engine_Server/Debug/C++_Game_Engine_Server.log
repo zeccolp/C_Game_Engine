@@ -1,0 +1,22 @@
+﻿Build started 12/9/2012 3:25:30 PM.
+     1>Project "F:\Programming\C++\C++_Game_Engine\C++_Game_Engine_Server\C++_Game_Engine_Server.vcxproj" on node 2 (build target(s)).
+     1>InitializeBuildStatus:
+         Creating "Debug\C++_Game_Engine_Server.unsuccessfulbuild" because "AlwaysCreate" was specified.
+       ClCompile:
+         All outputs are up-to-date.
+         D:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D DEBUG /D _MBCS /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt main.cpp
+         main.cpp
+       Link:
+         D:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"F:\Programming\C++\C++_Game_Engine\C++_Game_Engine_Client\Debug\C++_Game_Engine_Server.exe" /NOLOGO "sfml-audio-s-d.lib" "sfml-graphics-s-d.lib" "sfml-network-s-d.lib" "sfml-system-s-d.lib" "sfml-window-s-d.lib" kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Debug\C++_Game_Engine_Server.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"F:\Programming\C++\C++_Game_Engine\C++_Game_Engine_Client\Debug\C++_Game_Engine_Server.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"F:\Programming\C++\C++_Game_Engine\C++_Game_Engine_Client\Debug\C++_Game_Engine_Server.lib" /MACHINE:X86 Debug\main.obj
+         LINK : F:\Programming\C++\C++_Game_Engine\C++_Game_Engine_Client\Debug\C++_Game_Engine_Server.exe not found or not built by the last incremental link; performing full link
+         C++_Game_Engine_Server.vcxproj -> F:\Programming\C++\C++_Game_Engine\C++_Game_Engine_Client\Debug\C++_Game_Engine_Server.exe
+       Manifest:
+         C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /outputresource:"F:\Programming\C++\C++_Game_Engine\C++_Game_Engine_Client\Debug\C++_Game_Engine_Server.exe;#1" /manifest Debug\C++_Game_Engine_Server.exe.intermediate.manifest
+       FinalizeBuildStatus:
+         Deleting file "Debug\C++_Game_Engine_Server.unsuccessfulbuild".
+         Touching "Debug\C++_Game_Engine_Server.lastbuildstate".
+     1>Done Building Project "F:\Programming\C++\C++_Game_Engine\C++_Game_Engine_Server\C++_Game_Engine_Server.vcxproj" (build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:02.08
