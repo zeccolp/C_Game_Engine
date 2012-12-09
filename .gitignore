@@ -13,3 +13,10 @@ ipch/
 #each computer
 *Debug/
 *debug/
+
+#ignore the Release
+#folder since it's
+#generated on each
+#computer
+*Release/
+*release/
