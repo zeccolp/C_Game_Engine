@@ -34,7 +34,7 @@ ServerNetwork::~ServerNetwork()
 	
 }
 
-Player * ServerNetwork::RunIteration(Player * players, int playerCount)
+void ServerNetwork::RunIteration(Player* players, int playerCount)
 {
 	// Check for Network Connections
 	sf::SocketTCP Client;
@@ -114,7 +114,4 @@ Player * ServerNetwork::RunIteration(Player * players, int playerCount)
 			players[p].SetClient(PlayerClient);
 		}
 	}
-
-	// Send the players back to whomever sent them to us.
-	return players;
 }

@@ -19,6 +19,7 @@
 
 int main()
 {	
+	// Setup our players.
 	const int playerCount = 256;
 	Player * players = new Player [playerCount];
 	
@@ -29,7 +30,7 @@ int main()
 	while (true)
 	{
 		// Update the networking.
-		players = network.RunIteration(players, playerCount);
+		network.RunIteration(players, playerCount);
 
 		// Prevent 100% CPU usage.
 		Sleep(1);

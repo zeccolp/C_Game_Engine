@@ -14,7 +14,7 @@ class ServerNetwork
 	public:
 		ServerNetwork(int port);
 		~ServerNetwork();
-		Player * RunIteration(Player * players, int playerCount);
+		void RunIteration(Player* players, int playerCount);
 	private:
 		sf::SocketTCP mListener;
 };
