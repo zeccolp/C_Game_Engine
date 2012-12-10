@@ -1,3 +1,11 @@
+/*
+ * Project: C++_Game_Engine_Client
+ * Author: Elliott Brown (EBrown8534)
+ * Date Created: 10 December 2012
+ * Purpose: To provide a Network Interface for a Client for a 2D C++ Game Engine
+ * File: C++_Game_Engine_Client\ClientNetwork.hpp
+ */
+
 #pragma once
 #include "SFML\Network.hpp"
 #include <time.h>

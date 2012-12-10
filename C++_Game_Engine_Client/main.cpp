@@ -54,6 +54,7 @@ int main()
 		bool MouseLeftClick			 = Input.IsMouseButtonDown(sf::Mouse::Left);
 		bool MouseRightClick		 = Input.IsMouseButtonDown(sf::Mouse::Right);
 
+		// This will return false only if our Keepalives failed.
 		if (!network.RunIteration())
 			App.Close();
 
