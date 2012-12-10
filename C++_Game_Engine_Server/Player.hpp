@@ -7,16 +7,15 @@
  */
 
 #pragma once
-#include "SFML\Network.hpp"
 
 class Player
 {
 	public:
 		Player();
 		~Player();
+		void SetConnected(bool connected);
 		void SetClient(sf::SocketTCP client);
 		void SetAddress(sf::IPAddress clientAddress);
-		void SetConnected(bool connected);
 		bool GetConnected();
 		sf::SocketTCP GetClient();
 		sf::IPAddress GetAddress();

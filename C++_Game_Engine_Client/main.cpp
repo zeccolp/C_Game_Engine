@@ -13,6 +13,7 @@
 #include "SFML\Network.hpp"
 #include "SFML\System.hpp"
 #include "SFML\Window.hpp"
+#include "ClientNetwork.hpp"
 
 int main()
 {
@@ -27,12 +28,9 @@ int main()
     // Get a reference to the input manager associated to our window, and store it for later use
     const sf::Input& Input = App.GetInput();
 
-	sf::SocketTCP Client;
-	if (Client.Connect(8081, ip) != sf::Socket::Done)
-	{
-		// Error...
+	ClientNetwork network = ClientNetwork(8081, ip);
+	if (!network.Connect())
 		return -1;
-	}
 
     // Start main loop
     while (App.IsOpened())
@@ -56,24 +54,12 @@ int main()
 		bool MouseLeftClick			 = Input.IsMouseButtonDown(sf::Mouse::Left);
 		bool MouseRightClick		 = Input.IsMouseButtonDown(sf::Mouse::Right);
 
-		char Buffer[] = "Hi guys ! ";
-		Buffer[9] = clock();
-		sf::Socket::Status status = Client.Send(Buffer, sizeof(Buffer));
-		if (status != sf::Socket::Done)
-		{
-			if (status == sf::Socket::Status::Disconnected)
-				App.Close();
-
-			// Error...
-			std::cout << "Error";
-		}
-		std::cout << Client.IsValid();
+		if (!network.RunIteration())
+			App.Close();
 
         // Display window on screen
         App.Display();
     }
-
-	Client.Close();
 
 	// End of Programme
 #if DEBUG

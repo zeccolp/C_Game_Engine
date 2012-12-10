@@ -14,8 +14,8 @@
 #include "SFML\Network.hpp"
 #include "SFML\System.hpp"
 #include "SFML\Window.hpp"
-#include "ServerNetwork.hpp"
 #include "Player.hpp"
+#include "ServerNetwork.hpp"
 
 ServerNetwork::ServerNetwork(int port)
 {
@@ -40,6 +40,7 @@ void ServerNetwork::RunIteration(Player* players, int playerCount)
 	sf::SocketTCP Client;
 	sf::IPAddress ClientAddress;
 
+	// Check if there was a socket to accept.
 	if (mListener.Accept(Client, &ClientAddress) != sf::Socket::Done)
 	{
 		// Connection failed. Nothing to do.
@@ -84,11 +85,12 @@ void ServerNetwork::RunIteration(Player* players, int playerCount)
 			sf::SocketTCP PlayerClient = players[p].GetClient();
 
 			// Setup variables.
-			char Buffer[128];
-			std::size_t Received;
+			sf::Uint8 packetCode;
+			sf::Packet buffer;
 
 			// Read from the buffer.
-			sf::Socket::Status status = PlayerClient.Receive(Buffer, sizeof(Buffer), Received);
+			sf::Socket::Status status = PlayerClient.Receive(buffer);
+			buffer >> packetCode;
 
 			// If it was a bad read, we might have more to do.
 			if (status != sf::Socket::Done)
@@ -108,7 +110,7 @@ void ServerNetwork::RunIteration(Player* players, int playerCount)
 				}
 			}
 			else // Just tell us what they sent and if they're valid or not.
-				std::cout << Buffer << players[p].GetClient().IsValid();
+				std::cout << packetCode << players[p].GetClient().IsValid();
 			
 			// Update the player client.
 			players[p].SetClient(PlayerClient);

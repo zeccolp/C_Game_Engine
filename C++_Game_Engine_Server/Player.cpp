@@ -6,13 +6,13 @@
  * File: C++_Game_Engine_Server\Player.cpp
  */
 
-#include "Player.hpp"
 #include "SFML\Audio.hpp"
 #include "SFML\Config.hpp"
 #include "SFML\Graphics.hpp"
 #include "SFML\Network.hpp"
 #include "SFML\System.hpp"
 #include "SFML\Window.hpp"
+#include "Player.hpp"
 
 Player::Player()
 {
@@ -25,6 +25,11 @@ Player::~Player()
 {
 	mClient.Close();
 	SetConnected(false);
+}
+
+void Player::SetConnected(bool connected)
+{
+	mConnected = connected;
 }
 
 void Player::SetClient(sf::SocketTCP client)
@@ -40,11 +45,6 @@ void Player::SetAddress(sf::IPAddress clientAddress)
 bool Player::GetConnected()
 {
 	return mConnected;
-}
-
-void Player::SetConnected(bool connected)
-{
-	mConnected = connected;
 }
 
 sf::SocketTCP Player::GetClient()
