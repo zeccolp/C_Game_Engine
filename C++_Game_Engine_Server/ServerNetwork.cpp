@@ -23,7 +23,7 @@ ServerNetwork::ServerNetwork(int port)
 	if (!mListener.Listen(port))
 		std::cout << "Error! Could not initialize listener!";
 	else
-		std::cout << "Network seems to have initialized correctly." << std::endl;
+		std::cout << "Network seems to have initialized correctly on port " << port << "." << std::endl;
 
 	// Unblock the networking.
 	mListener.SetBlocking(false);

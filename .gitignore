@@ -20,3 +20,14 @@ ipch/
 #computer
 *Release/
 *release/
+
+#ignore the Mailing List
+#since that is secret
+#information D:
+MailingList.txt
+
+#ignore the Binaries
+#folder since it's only
+#on EBrown8534's
+#computer
+Binaries/

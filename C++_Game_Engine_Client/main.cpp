@@ -17,17 +17,18 @@
 
 int main()
 {
-	std::cout << "Test" << std::endl;
+	std::cout << "C++ Game Engine Client" << std::endl << "Enter the IP of the Server you wish to connect to: (will connect on port 8081)" << std::endl;
 	std::string ip;
 	std::cin >> ip;
 
 	// Create the main window
-    sf::Window App(sf::VideoMode(800, 600, 32), "SFML Events");
-	App.SetFramerateLimit(75);
+    sf::Window App(sf::VideoMode(800, 600, 32), "C++ Game Engine");
+	App.SetFramerateLimit(60);
 
     // Get a reference to the input manager associated to our window, and store it for later use
     const sf::Input& Input = App.GetInput();
 
+	// Create and connect to the Server.
 	ClientNetwork network = ClientNetwork(8081, ip);
 	if (!network.Connect())
 		return -1;
@@ -51,8 +52,8 @@ int main()
 		// Get mouse states.
         unsigned int MouseX          = Input.GetMouseX();
         unsigned int MouseY          = Input.GetMouseY();
-		bool MouseLeftClick			 = Input.IsMouseButtonDown(sf::Mouse::Left);
-		bool MouseRightClick		 = Input.IsMouseButtonDown(sf::Mouse::Right);
+		bool MouseLeftClick          = Input.IsMouseButtonDown(sf::Mouse::Left);
+		bool MouseRightClick         = Input.IsMouseButtonDown(sf::Mouse::Right);
 
 		// This will return false only if our Keepalives failed.
 		if (!network.RunIteration())

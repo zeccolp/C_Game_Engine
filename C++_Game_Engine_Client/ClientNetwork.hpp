@@ -16,12 +16,13 @@ class ClientNetwork
 		enum PacketType { C_KeepAlive = 0, };
 
 		ClientNetwork();
-		ClientNetwork(int port, sf::IPAddress ipAddress, int keepaliveDelay = 250);
+		ClientNetwork(int port, sf::IPAddress ipAddress, int keepaliveDelay = 250); // Default Keep-Alives Delay set to 250ms.
 		~ClientNetwork();
 		bool Connect();
 		bool RunIteration();
 		bool IsAlive();
 		bool SendPacket(PacketType code, bool falseOnDisconnectOnly = false);
+		bool SendPacket(sf::Packet packet, bool falseOnDisconnectOnly = false);
 	private:
 		clock_t mLastKeepalive;
 		sf::SocketTCP mClient;

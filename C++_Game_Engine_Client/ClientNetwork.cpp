@@ -72,7 +72,13 @@ bool ClientNetwork::SendPacket(PacketType code, bool falseOnDisconnectOnly)
 	buffer << code;
 
 	// Send the buffer and check if it worked.
-	sf::Socket::Status status = mClient.Send(buffer);
+	return SendPacket(buffer, falseOnDisconnectOnly);
+}
+
+bool ClientNetwork::SendPacket(sf::Packet packet, bool falseOnDisconnectOnly)
+{
+	// Send the buffer and check if it worked.
+	sf::Socket::Status status = mClient.Send(packet);
 	if (status != sf::Socket::Done)
 	{
 		// How are we returning our false's? If it's disconnect only, we need to know.
@@ -88,7 +94,12 @@ bool ClientNetwork::SendPacket(PacketType code, bool falseOnDisconnectOnly)
 			return false;
 		}
 	}
+	else
+	{
+		// Update the last keepalive time. (Why? Because if we were successful in sending a packet then clearly the connection is still live.)
+		mLastKeepalive = clock();
+	}
 
-	// I guess it was good, return true.
+	// Clearly it worked, or we're not reporting on the failure it had.
 	return true;
 }
