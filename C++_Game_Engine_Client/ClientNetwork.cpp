@@ -9,6 +9,7 @@
 #include <time.h>
 #include "SFML\Network.hpp"
 #include "ClientNetwork.hpp"
+#include <iostream>
 
 ClientNetwork::ClientNetwork()
 {
@@ -32,16 +33,29 @@ ClientNetwork::~ClientNetwork()
 bool ClientNetwork::Connect()
 {
 	if (mClient.Connect(mPort, mIPAddress) != sf::Socket::Done)
+	{
+		mLastKeepalive = clock();
 		return false;
+	}
 	else
-		return true;
+	{
+		mClient.SetBlocking(false);
 
-	mLastKeepalive = clock();
+		mLastKeepalive = clock();
+		return true;
+	}
 }
 
 bool ClientNetwork::RunIteration()
 {
-	return IsAlive();
+	// Will only return false if the socket has disconnected.
+	bool isAlive = IsAlive();
+
+	// Will only return false if disconnect or receive error
+	bool receiveStatus = Receive(true);
+
+	// Will return false if socket has disconnected or errored on receive.
+	return isAlive & receiveStatus;
 }
 
 bool ClientNetwork::IsAlive()
@@ -62,14 +76,36 @@ bool ClientNetwork::IsAlive()
 	return true;
 }
 
+bool ClientNetwork::Receive(bool trueOnNoData)
+{
+	// Setup our Packet and status.
+	sf::Packet receive;
+	sf::Socket::Status status = mClient.Receive(receive);
+
+	// Check if anything was recieved
+	if (status == sf::Socket::Status::Done)
+	{
+		// Process packet logic here
+		return true;
+	}
+	else if (status == sf::Socket::Status::NotReady && trueOnNoData)
+	{
+		// Socket wasn't ready and they want us to pretend that's good, return true.
+		return true;
+	}
+
+	// Something bad happened, return false.
+	return false;
+}
+
 bool ClientNetwork::SendPacket(PacketType code, bool falseOnDisconnectOnly)
 {
 	// Setup the packet code.
 	sf::Uint8 pCode = code;
-		
+	
 	// Write to the packet buffer.
 	sf::Packet buffer;
-	buffer << code;
+	buffer << pCode;
 
 	// Send the buffer and check if it worked.
 	return SendPacket(buffer, falseOnDisconnectOnly);

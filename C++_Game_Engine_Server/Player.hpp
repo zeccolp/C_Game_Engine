@@ -19,8 +19,10 @@ class Player
 		bool GetConnected();
 		sf::SocketTCP GetClient();
 		sf::IPAddress GetAddress();
+		void SetPosition(sf::Vector2f position);
 	private:
 		sf::SocketTCP mClient;
 		sf::IPAddress mClientAddress;
 		bool mConnected;
+		sf::Vector2f mPosition;
 };

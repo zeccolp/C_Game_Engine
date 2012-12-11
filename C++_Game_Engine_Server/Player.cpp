@@ -56,3 +56,8 @@ sf::IPAddress Player::GetAddress()
 {
 	return mClientAddress;
 }
+
+void Player::SetPosition(sf::Vector2f position)
+{
+	mPosition = position;
+}

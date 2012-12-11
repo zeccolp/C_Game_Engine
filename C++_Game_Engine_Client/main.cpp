@@ -14,6 +14,8 @@
 #include "SFML\System.hpp"
 #include "SFML\Window.hpp"
 #include "ClientNetwork.hpp"
+#include "Player.hpp"
+#include "GeneralPacket.hpp"
 
 int main()
 {
@@ -32,6 +34,14 @@ int main()
 	ClientNetwork network = ClientNetwork(8081, ip);
 	if (!network.Connect())
 		return -1;
+
+	Player player;
+	player.SetRealPosition(sf::Vector2f(5, 15));
+	GeneralPacket packet;
+	packet << sf::Int8(ClientNetwork::PacketType::C_BlankPacket);
+	packet << player;
+	std::cout << packet;
+	network.SendPacket(packet);
 
     // Start main loop
     while (App.IsOpened())
