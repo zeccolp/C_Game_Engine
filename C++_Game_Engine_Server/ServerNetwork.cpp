@@ -111,6 +111,22 @@ void ServerNetwork::RunIteration(Player* players, int playerCount)
 			}
 			else // Just tell us what they sent and if they're valid or not.
 				std::cout << packetCode << players[p].GetClient().IsValid();
+
+			// Let's find out what packet was sent.
+			switch (packetCode)
+			{
+				case 0:
+					// Keep-Alive, nothing to do.
+					break;
+				case 2:
+					// This was a blank packet. Only used for Debugging.
+					float x;
+					float y;
+					buffer >> x >> y;
+					players[p].SetPosition(sf::Vector2f(x, y));
+					std::cout << x << y;
+					break;
+			}
 			
 			// Update the player client.
 			players[p].SetClient(PlayerClient);
