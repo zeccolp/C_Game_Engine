@@ -11,12 +11,6 @@
 #include "ClientNetwork.hpp"
 #include <iostream>
 
-ClientNetwork::ClientNetwork()
-{
-	mLastKeepalive = clock();
-	mKeepaliveDelay = 250;
-}
-
 ClientNetwork::ClientNetwork(int port, sf::IPAddress ipAddress, int keepaliveDelay)
 {
 	mPort = port;

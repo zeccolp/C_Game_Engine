@@ -16,6 +16,5 @@ class GeneralPacket : public sf::Packet
 	public:
 		friend GeneralPacket& operator <<(GeneralPacket& packet, Player& player);
 		friend GeneralPacket& operator <<(GeneralPacket& packet, sf::Vector2f& vector);
-		friend class sf::Packet;
 	private:
 };

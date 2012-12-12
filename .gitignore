@@ -35,4 +35,8 @@ Binaries/
 #ignore the sdf file, it
 #is rather troublesome
 #anyway
-#*.sdf
+*.sdf
+
+#ignore the suo file, it
+#is rather useless
+*.suo

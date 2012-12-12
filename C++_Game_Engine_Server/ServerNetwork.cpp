@@ -122,9 +122,10 @@ void ServerNetwork::RunIteration(Player* players, int playerCount)
 					// This was a blank packet. Only used for Debugging.
 					float x;
 					float y;
-					buffer >> x >> y;
+					int sprite;
+					buffer >> x >> y >> sprite;
 					players[p].SetPosition(sf::Vector2f(x, y));
-					std::cout << x << y;
+					std::cout << x << y << sprite;
 					break;
 			}
 			

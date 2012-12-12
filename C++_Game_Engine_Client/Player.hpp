@@ -9,6 +9,7 @@
 #pragma once
 #include "SFML\Graphics.hpp"
 #include "SFML\Network.hpp"
+#include "ClientNetwork.hpp"
 
 class Player
 {
@@ -17,7 +18,15 @@ class Player
 		~Player();
 		sf::Vector2f GetRealPosition();
 		void SetRealPosition(sf::Vector2f realPos);
+		sf::Vector2f GetDisplayPosition();
+		void SetDisplayPosition(sf::Vector2f dispPos);
+		int GetSprite();
+		void SetSprite(int sprite);
+		void Update();
+		void Move(int direction, ClientNetwork& network);
 	private:
 		sf::Vector2f mRealPos;
 		sf::Vector2f mDispPos;
+		int mSprite;
+		unsigned char mDirection;
 };

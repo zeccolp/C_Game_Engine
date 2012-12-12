@@ -24,7 +24,7 @@ int main()
 	std::cin >> ip;
 
 	// Create the main window
-    sf::Window App(sf::VideoMode(800, 600, 32), "C++ Game Engine");
+    sf::RenderWindow App(sf::VideoMode(800, 600, 32), "C++ Game Engine");
 	App.SetFramerateLimit(60);
 
     // Get a reference to the input manager associated to our window, and store it for later use
@@ -35,17 +35,32 @@ int main()
 	if (!network.Connect())
 		return -1;
 
+	// Create our player object.
 	Player player;
-	player.SetRealPosition(sf::Vector2f(5, 15));
-	GeneralPacket packet;
-	packet << sf::Int8(ClientNetwork::PacketType::C_BlankPacket);
-	packet << player;
-	std::cout << packet;
-	network.SendPacket(packet);
+
+	// Create the font object.
+	sf::Font MyFont;
+
+	// Try to load some font from our fonts folder.
+	if (!MyFont.LoadFromFile("Fonts\\consola.ttf"))
+	{
+		// Just close if we errored.
+		App.Close();
+	}
+
+	// Setup the Text object
+	sf::String Text("Hello", MyFont, 18);
 
     // Start main loop
     while (App.IsOpened())
     {
+		// This will return false only if our Keepalives failed.
+		if (!network.RunIteration())
+			App.Close();
+
+		// Clean the screen
+		App.Clear();
+
         // Process events
         sf::Event Event;
         while (App.GetEvent(Event))
@@ -65,9 +80,22 @@ int main()
 		bool MouseLeftClick          = Input.IsMouseButtonDown(sf::Mouse::Left);
 		bool MouseRightClick         = Input.IsMouseButtonDown(sf::Mouse::Right);
 
-		// This will return false only if our Keepalives failed.
-		if (!network.RunIteration())
-			App.Close();
+		// Check for movement.
+		if (Input.IsKeyDown(sf::Key::W))
+			player.Move(0x01, network);
+		if (Input.IsKeyDown(sf::Key::S))
+			player.Move(0x02, network);
+		if (Input.IsKeyDown(sf::Key::A))
+			player.Move(0x04, network);
+		if (Input.IsKeyDown(sf::Key::D))
+			player.Move(0x08, network);
+
+		// Update the player. (Internal synchronization logic and whatnot.)
+		player.Update();
+
+		// Update the Text Position and draw it.
+		Text.SetPosition(player.GetDisplayPosition());
+		App.Draw(Text);
 
         // Display window on screen
         App.Display();

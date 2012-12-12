@@ -10,13 +10,24 @@
 
 GeneralPacket& operator <<(GeneralPacket& packet, Player& player)
 {
-	// Simply add the players information to the packet, in the order we want it.
-	return packet << player.GetRealPosition();
+	// This will get complicated again, as adding natural types defined in sf::Packet require implicit conversions.
+
+	// Create our reference to packet.
+	GeneralPacket thisPacket = packet;
+
+	// Write to the packet.
+	thisPacket << player.GetRealPosition() << player.GetSprite();
+
+	// Change-up the references.
+	packet = thisPacket;
+
+	// Return the reference needed.
+	return packet;
 }
 
 GeneralPacket& operator <<(GeneralPacket& packet, sf::Vector2f& vector)
 {
-	// This is a little more complicated, as an implicit conversion is necessary.
+	// This is a little more complicated, as an implicit conversion from sf::Packet to GeneralPacket is necessary.
 
 	// Create a reference to "packet".
 	GeneralPacket thisPacket = packet;

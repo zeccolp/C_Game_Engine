@@ -15,8 +15,7 @@ class ClientNetwork
 	public:
 		enum PacketType { C_KeepAlive = 0, S_KeepAlive, C_BlankPacket };
 
-		ClientNetwork();
-		ClientNetwork(int port, sf::IPAddress ipAddress, int keepaliveDelay = 250); // Default Keep-Alives Delay set to 250ms.
+		ClientNetwork(int port, sf::IPAddress ipAddress, int keepaliveDelay = 1000); // Default Keep-Alives Delay set to 1000ms.
 		~ClientNetwork();
 		bool Connect();
 		bool RunIteration();
