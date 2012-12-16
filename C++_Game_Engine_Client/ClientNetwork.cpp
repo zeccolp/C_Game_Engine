@@ -7,9 +7,9 @@
  */
 
 #include <time.h>
-#include "SFML\Network.hpp"
-#include "ClientNetwork.hpp"
 #include <iostream>
+#include "SFML\Network.hpp"
+#include "ClientNetwork.h"
 
 ClientNetwork::ClientNetwork(int port, sf::IPAddress ipAddress, int keepaliveDelay)
 {
@@ -40,13 +40,13 @@ bool ClientNetwork::Connect()
 	}
 }
 
-bool ClientNetwork::RunIteration()
+bool ClientNetwork::RunIteration(Player& player)
 {
 	// Will only return false if the socket has disconnected.
 	bool isAlive = IsAlive();
 
 	// Will only return false if disconnect or receive error
-	bool receiveStatus = Receive(true);
+	bool receiveStatus = Receive(player, true);
 
 	// Will return false if socket has disconnected or errored on receive.
 	return isAlive & receiveStatus;
@@ -70,7 +70,7 @@ bool ClientNetwork::IsAlive()
 	return true;
 }
 
-bool ClientNetwork::Receive(bool trueOnNoData)
+bool ClientNetwork::Receive(Player& player, bool trueOnNoData)
 {
 	// Setup our Packet and status.
 	sf::Packet receive;
@@ -80,6 +80,20 @@ bool ClientNetwork::Receive(bool trueOnNoData)
 	if (status == sf::Socket::Status::Done)
 	{
 		// Process packet logic here
+		sf::Int8 packetID;
+		receive >> packetID;
+
+		switch (packetID)
+		{
+			case S_LocationUpdate:
+				float x;
+				float y;
+				receive >> x >> y;
+				player.SetRealPosition(sf::Vector2f(x, y));
+				std::cout << x << y;
+				break;
+		}
+
 		return true;
 	}
 	else if (status == sf::Socket::Status::NotReady && trueOnNoData)

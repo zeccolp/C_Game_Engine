@@ -3,10 +3,10 @@
  * Author: Elliott Brown (EBrown8534)
  * Date Created: 11 December 2012
  * Purpose: To provide a General Packet for a Client for a 2D C++ Game Engine
- * File: C++_Game_Engine_Client\GeneralPacket.hpp
+ * File: C++_Game_Engine_Client\GeneralPacket.cpp
  */
 
-#include "GeneralPacket.hpp"
+#include "GeneralPacket.h"
 
 GeneralPacket& operator <<(GeneralPacket& packet, Player& player)
 {
@@ -16,7 +16,7 @@ GeneralPacket& operator <<(GeneralPacket& packet, Player& player)
 	GeneralPacket thisPacket = packet;
 
 	// Write to the packet.
-	thisPacket << player.GetRealPosition() << player.GetSprite();
+	thisPacket << player.GetRealPosition() << player.GetSprite() << player.GetDirection();
 
 	// Change-up the references.
 	packet = thisPacket;

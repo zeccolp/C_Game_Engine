@@ -14,8 +14,8 @@
 #include "SFML\Network.hpp"
 #include "SFML\System.hpp"
 #include "SFML\Window.hpp"
-#include "Player.hpp"
-#include "ServerNetwork.hpp"
+#include "Player.h"
+#include "ServerNetwork.h"
 
 ServerNetwork::ServerNetwork(int port)
 {
@@ -61,11 +61,10 @@ void ServerNetwork::RunIteration(Player* players, int playerCount)
 				players[p].SetAddress(ClientAddress);
 				players[p].SetConnected(true);
 				didConnect = true;
-			}
 
-			// If they connected, break the loop.
-			if (didConnect)
+				// Break the loop.
 				break;
+			}
 		}
 
 		// We couldn't find a spot, close their connection.
@@ -112,25 +111,65 @@ void ServerNetwork::RunIteration(Player* players, int playerCount)
 			else // Just tell us what they sent and if they're valid or not.
 				std::cout << packetCode << players[p].GetClient().IsValid();
 
-			// Let's find out what packet was sent.
-			switch (packetCode)
-			{
-				case 0:
-					// Keep-Alive, nothing to do.
-					break;
-				case 2:
-					// This was a blank packet. Only used for Debugging.
-					float x;
-					float y;
-					int sprite;
-					buffer >> x >> y >> sprite;
-					players[p].SetPosition(sf::Vector2f(x, y));
-					std::cout << x << y << sprite;
-					break;
-			}
+			// Process the packet.
+			Packet((PacketType)packetCode, players[p], buffer);
 			
 			// Update the player client.
 			players[p].SetClient(PlayerClient);
 		}
+	}
+}
+
+void ServerNetwork::Packet(PacketType packetType, Player& player, sf::Packet buffer)
+{
+	// Setup some variables.
+	float x;
+	float y;
+	int sprite;
+	int direction;
+
+	// Create a response
+	sf::Packet response;
+
+	// Let's find out what packet was sent.
+	switch (packetType)
+	{
+		case C_KeepAlive:
+			// Keep-Alive, nothing to do.
+			break;
+		case C_BlankPacket:
+			// This was a blank packet. Only used for Debugging.
+			buffer >> x >> y >> sprite >> direction;
+			player.SetPosition(sf::Vector2f(x, y));
+			std::cout << x << y << sprite << direction;
+			break;
+		case C_LocationUpdate:
+			// Read the new direction from the buffer.
+			buffer >> direction;
+			x = player.GetPosition().x;
+			y = player.GetPosition().y;
+
+			// TODO: Do Block-Logic here.
+
+			// Here is where we update their position.
+			if ((direction & 0x01) != 0x00)
+				y -= 1;
+			if ((direction & 0x02) != 0x00)
+				y += 1;
+			if ((direction & 0x04) != 0x00)
+				x -= 1;
+			if ((direction & 0x08) != 0x00)
+				x += 1;
+
+			// Set their position.
+			player.SetPosition(sf::Vector2f(x, y));
+
+			// Build a response
+			response << (sf::Int8)S_LocationUpdate;
+			response << x << y;
+
+			// Send them the response.
+			player.GetClient().Send(response);
+			break;
 	}
 }

@@ -3,24 +3,24 @@
  * Author: Elliott Brown (EBrown8534)
  * Date Created: 10 December 2012
  * Purpose: To provide a Network Interface for a Client for a 2D C++ Game Engine
- * File: C++_Game_Engine_Client\ClientNetwork.hpp
+ * File: C++_Game_Engine_Client\ClientNetwork.h
  */
 
 #pragma once
+#include "Player.h"
 #include "SFML\Network.hpp"
-#include <time.h>
 
 class ClientNetwork
 {
 	public:
-		enum PacketType { C_KeepAlive = 0, S_KeepAlive, C_BlankPacket };
+		enum PacketType { C_KeepAlive = 0, S_KeepAlive, C_BlankPacket, S_BlankPacket, C_LocationUpdate, S_LocationUpdate };
 
 		ClientNetwork(int port, sf::IPAddress ipAddress, int keepaliveDelay = 1000); // Default Keep-Alives Delay set to 1000ms.
 		~ClientNetwork();
 		bool Connect();
-		bool RunIteration();
+		bool RunIteration(Player& player);
 		bool IsAlive();
-		bool Receive(bool trueOnNoData = false);
+		bool Receive(Player& player, bool trueOnNoData = false);
 		bool SendPacket(PacketType code, bool falseOnDisconnectOnly = false);
 		bool SendPacket(sf::Packet packet, bool falseOnDisconnectOnly = false);
 	private:

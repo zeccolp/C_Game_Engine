@@ -77,8 +77,8 @@
     <ClCompile Include="ServerNetwork.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Player.hpp" />
-    <ClInclude Include="ServerNetwork.hpp" />
+    <ClInclude Include="Player.h" />
+    <ClInclude Include="ServerNetwork.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

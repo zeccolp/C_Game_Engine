@@ -14,8 +14,8 @@
 #include "SFML\Network.hpp"
 #include "SFML\System.hpp"
 #include "SFML\Window.hpp"
-#include "ServerNetwork.hpp"
-#include "Player.hpp"
+#include "ServerNetwork.h"
+#include "Player.h"
 
 int main()
 {	

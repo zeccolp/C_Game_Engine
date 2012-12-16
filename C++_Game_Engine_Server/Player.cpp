@@ -12,7 +12,7 @@
 #include "SFML\Network.hpp"
 #include "SFML\System.hpp"
 #include "SFML\Window.hpp"
-#include "Player.hpp"
+#include "Player.h"
 
 Player::Player()
 {
@@ -55,6 +55,11 @@ sf::SocketTCP Player::GetClient()
 sf::IPAddress Player::GetAddress()
 {
 	return mClientAddress;
+}
+
+sf::Vector2f Player::GetPosition()
+{
+	return mPosition;
 }
 
 void Player::SetPosition(sf::Vector2f position)
