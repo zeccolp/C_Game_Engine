@@ -14,12 +14,14 @@
 class Menu
 {
 	public:
+		enum NewMenu { M_MainMenu, M_GameMenu };
+
 		Menu();
 		Menu(sf::Font font);
 
 		// Putting = 0; makes it a pure virtual call. This means that all base classes MUST INCLUDE THESE FUNCTIONS or they get a error
 		// But this actual class does not have these functions so it cannot be Called.
 		virtual void SetFont(sf::Font font) = 0;
-		virtual void RunIteration(sf::RenderWindow &App, ClientNetwork &network) = 0;
+		virtual NewMenu RunIteration(sf::RenderWindow &App, ClientNetwork &network) = 0;
 	private:
 };

@@ -73,7 +73,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ClientNetwork.cpp" />
+    <ClCompile Include="GameMenu.cpp" />
     <ClCompile Include="GeneralPacket.cpp" />
+    <ClCompile Include="InputHandler.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="Menu.cpp" />
@@ -81,7 +83,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ClientNetwork.h" />
+    <ClInclude Include="GameMenu.h" />
     <ClInclude Include="GeneralPacket.h" />
+    <ClInclude Include="InputHandler.h" />
     <ClInclude Include="MainMenu.h" />
     <ClInclude Include="Menu.h" />
     <ClInclude Include="Player.h" />

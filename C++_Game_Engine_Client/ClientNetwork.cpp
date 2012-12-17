@@ -17,6 +17,7 @@ ClientNetwork::ClientNetwork(int port, sf::IPAddress ipAddress, int keepaliveDel
 	mIPAddress = ipAddress;
 	mLastKeepalive = clock();
 	mKeepaliveDelay = keepaliveDelay;
+	mConnected = false;
 }
 
 ClientNetwork::~ClientNetwork()
@@ -26,30 +27,46 @@ ClientNetwork::~ClientNetwork()
 
 bool ClientNetwork::Connect()
 {
-	if (mClient.Connect(mPort, mIPAddress) != sf::Socket::Done)
+	// Check if we are currently connected.
+	if (!mConnected)
 	{
-		mLastKeepalive = clock();
-		return false;
+		if (mClient.Connect(mPort, mIPAddress) != sf::Socket::Done)
+		{
+			mLastKeepalive = clock();
+			return false;
+		}
+		else
+		{
+			mClient.SetBlocking(false);
+
+			mConnected = true;
+			mLastKeepalive = clock();
+			return true;
+		}
 	}
 	else
 	{
-		mClient.SetBlocking(false);
-
-		mLastKeepalive = clock();
 		return true;
 	}
 }
 
 bool ClientNetwork::RunIteration(Player& player)
 {
-	// Will only return false if the socket has disconnected.
-	bool isAlive = IsAlive();
+	if (mConnected)
+	{
+		// Will only return false if the socket has disconnected.
+		bool isAlive = IsAlive();
 
-	// Will only return false if disconnect or receive error
-	bool receiveStatus = Receive(player, true);
+		// Will only return false if disconnect or receive error
+		bool receiveStatus = Receive(player, true);
 
-	// Will return false if socket has disconnected or errored on receive.
-	return isAlive & receiveStatus;
+		// Will return false if socket has disconnected or errored on receive.
+		return isAlive & receiveStatus;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 bool ClientNetwork::IsAlive()

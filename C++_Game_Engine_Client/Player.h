@@ -29,4 +29,5 @@ class Player
 		sf::Vector2f mDispPos;
 		int mSprite;
 		int mDirection;
+		int mLastSignal;
 };

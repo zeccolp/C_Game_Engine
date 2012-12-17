@@ -19,6 +19,7 @@ Player::Player()
 	mRealPos = sf::Vector2f();
 	mSprite = 0;
 	mDirection = 0x00;
+	mLastSignal = 0;
 }
 
 Player::~Player()
@@ -70,6 +71,9 @@ void Player::SetDirection(int direction)
 
 void Player::Update()
 {
+	if (mLastSignal > 0)
+		mLastSignal--;
+
 	if (mRealPos.x != mDispPos.x)
 	{
 		mDispPos.x += (float)((mRealPos.x > mDispPos.x ? 1 : -1) / 32.);
@@ -83,7 +87,7 @@ void Player::Update()
 void Player::Move(int direction, ClientNetwork& network)
 {
 	// Check if we need to move.
-	if (mRealPos == mDispPos)
+	if (mRealPos == mDispPos && mLastSignal == 0)
 	{
 		// Set our direction.
 		mDirection = direction;
@@ -94,5 +98,8 @@ void Player::Move(int direction, ClientNetwork& network)
 		packet << mDirection;
 		std::cout << packet;
 		network.SendPacket(packet);
+
+		// Update the LastSignal so we don't spam movement packets.
+		mLastSignal = 30;
 	}
 }

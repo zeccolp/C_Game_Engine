@@ -12,12 +12,26 @@
 class MainMenu : public Menu
 {
 	public:
+		enum MenuAction { M_MainMenu, M_Login, M_Register };
+
 		MainMenu();
 		MainMenu(sf::Font font);
 		void SetFont(sf::Font font);
-		void RunIteration(sf::RenderWindow &App, ClientNetwork &network);
+		Menu::NewMenu RunIteration(sf::RenderWindow &App, ClientNetwork &network);
 	private:
 		sf::String mLoginButton;
 		sf::String mRegisterButton;
+		sf::String mActionTitle;
+		sf::String mActionButton;
+		sf::String mCancelButton;
+		sf::String mUsername;
+		sf::String mPassword;
+		sf::String mEmail;
+		sf::String mResponse;
 		sf::Font mFont;
+		MenuAction mMenuAction;
+		std::string mUsernameAct;
+		std::string mPasswordAct;
+		std::string mEmailAct;
+		int mActiveInput;
 };

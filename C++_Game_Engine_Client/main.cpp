@@ -18,6 +18,8 @@
 #include "GeneralPacket.h"
 #include "Menu.h"
 #include "MainMenu.h"
+#include "GameMenu.h"
+#include "InputHandler.h"
 
 int main()
 {
@@ -35,8 +37,6 @@ int main()
 
 	// Create and connect to the Server.
 	ClientNetwork network(8081, ip);
-	if (!network.Connect())
-		return -1;
 
 	// Create our player object.
 	Player player;
@@ -51,19 +51,18 @@ int main()
 		App.Close();
 	}
 
-	// Setup the Text object
-	sf::String Text("Hello", MyFont, 18);
-
 	// Let's create our Menu to be used a little later.
 	Menu * menu = new MainMenu(MyFont);
+
+	// Setup a reference to what menu we are on.
+	Menu::NewMenu menuName = Menu::M_MainMenu;
+
+	// Create an Input Handler.
+	InputHandler inputHandler = InputHandler();
 
 	// Start main loop
 	while (App.IsOpened())
 	{
-		// This will return false only if our Keepalives failed.
-		if (!network.RunIteration(player))
-			App.Close();
-
 		// Clean the screen
 		App.Clear();
 
@@ -80,31 +79,29 @@ int main()
 				App.Close();
 		}
 
-		// Get mouse states.
-		unsigned int MouseX          = Input.GetMouseX();
-		unsigned int MouseY          = Input.GetMouseY();
-		bool MouseLeftClick          = Input.IsMouseButtonDown(sf::Mouse::Left);
-		bool MouseRightClick         = Input.IsMouseButtonDown(sf::Mouse::Right);
+		// Run an iteration of the Input Handler.
+		inputHandler.RunIteration(App);
 
-		// Check for movement.
-		if (Input.IsKeyDown(sf::Key::W))
-			player.Move(0x01, network);
-		if (Input.IsKeyDown(sf::Key::S))
-			player.Move(0x02, network);
-		if (Input.IsKeyDown(sf::Key::A))
-			player.Move(0x04, network);
-		if (Input.IsKeyDown(sf::Key::D))
-			player.Move(0x08, network);
+		// This should call the MainMenu::RunIteration(sf::RenderWindow, ClientNetwork) or the GameMenu::RunIteration(sf::RenderWindow, ClientNetwork) as appropriate.
+		Menu::NewMenu newMenu = menu->RunIteration(App, network);
 
-		// Update the player. (Internal synchronization logic and whatnot.)
-		player.Update();
-
-		// Update the Text Position and draw it.
-		Text.SetPosition(player.GetDisplayPosition(true));
-		App.Draw(Text);
-
-		// This should call the MainMenu::RunIteration(sf::RenderWindow, ClientNetwork)
-		menu->RunIteration(App, network);
+		// If the menu we are going to is not the same as where we are, let's do stuff.
+		if (newMenu != menuName)
+		{
+			// Where are you going?
+			if (newMenu == Menu::M_MainMenu)
+			{
+				// You're going to the Main Menu.
+				menu = new MainMenu(MyFont);
+				menuName = Menu::M_MainMenu;
+			}
+			else if (newMenu == Menu::M_GameMenu)
+			{
+				// You're going to the Game Menu
+				menu = new GameMenu(MyFont);
+				menuName = Menu::M_GameMenu;
+			}
+		}
 
 		// Display window on screen
 		App.Display();

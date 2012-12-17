@@ -29,4 +29,5 @@ class ClientNetwork
 		int mPort;
 		sf::IPAddress mIPAddress;
 		int mKeepaliveDelay;
+		bool mConnected;
 };
