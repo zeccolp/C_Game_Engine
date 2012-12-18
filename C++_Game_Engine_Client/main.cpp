@@ -59,7 +59,7 @@ int main()
 
 	// Create an Input Handler.
 	InputHandler inputHandler = InputHandler();
-
+	
 	// Start main loop
 	while (App.IsOpened())
 	{
