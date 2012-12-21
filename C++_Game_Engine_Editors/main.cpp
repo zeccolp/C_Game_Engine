@@ -35,6 +35,8 @@ int main()
 
 		if (nextItem == 1)
 		{
+			std::cout << "Creating window." << std::endl;
+
 			// Create the main window
 			sf::RenderWindow App(sf::VideoMode(800, 600, 32), "C++ Game Engine MapEditor");
 			App.SetFramerateLimit(60);
@@ -46,6 +48,8 @@ int main()
 			// Get a reference to the input manager associated to our window, and store it for later use
 			const sf::Input& Input = App.GetInput();
 
+			std::cout << "Window created. Loading memory." << std::endl;
+
 			// Create our variables.
 			int menu = -1;
 			int delay = 0;
@@ -53,6 +57,25 @@ int main()
 			// Create our menu's.
 			int totalMenus = 3;
 			RadialMenu * rMenus = new RadialMenu[totalMenus];
+
+			// Setup our firstFocus variable.
+			bool firstFocus = false;
+
+			// Load up a font.
+			sf::Font font;
+			if (!font.LoadFromFile("Fonts\\consolab.ttf"))
+			{
+				App.Close();
+				std::cout << "There was an issue loading the font.";
+			}
+
+			// Create the text to display.
+			sf::String text;
+			text.SetFont(font);
+			text.SetSize(18.0f);
+			text.SetText("Please click inside the window to get started.");
+			text.SetPosition(400 - (text.GetRect().Right - text.GetRect().Left) / 2, 300);
+			text.SetColor(sf::Color(0, 0, 0, 255));
 
 			// Create the Image we will be using.
 			sf::Image image;
@@ -107,6 +130,8 @@ int main()
 					rMenus[i].CreateSprites(rectangles, image);
 				}
 			}
+			
+			std::cout << "Loaded memory. Opening window." << std::endl;
 
 			// Start main loop
 			while (App.IsOpened())
@@ -129,41 +154,56 @@ int main()
 					// If we moved the wheel within the delay.
 					if ((Event.Type == sf::Event::MouseWheelMoved) && delay == 0)
 					{
-						// Setup the delta. (Only needed for positive/negative)
-						bool delta = Event.MouseWheel.Delta > 0 ? true : false;
-						
-						// Check what menu we are in.
-						if (menu == -1)
+						if (firstFocus)
 						{
-							// No menu. Join the main menu.
-							menu = 0;
+							// Setup the delta. (Only needed for positive/negative)
+							bool delta = Event.MouseWheel.Delta > 0 ? true : false;
+						
+							// Check what menu we are in.
+							if (menu == -1)
+							{
+								// No menu. Join the main menu.
+								menu = 0;
+							}
+							else
+							{
+								rMenus[menu].MouseScroll(delta);
+							}
+
+							// Setup the delay so that it slows how many scrolls per second.
+							delay = 4;
+						}
+					}
+					
+					if (Event.Type == sf::Event::MouseButtonPressed && delay == 0)
+					{
+						if (firstFocus)
+						{
+							// Check what button was clicked.
+							if (Event.MouseButton.Button == sf::Mouse::Button::Right)
+							{
+								if (menu > -1)
+								{
+									menu = rMenus[menu].UnSelect();
+									rMenus[menu].UnSelect();
+								}
+							}
+							else if (Event.MouseButton.Button == sf::Mouse::Button::Left)
+							{
+								if (menu > -1)
+								{
+									menu = rMenus[menu].Select();
+								}
+							}
+
+							// Setup the delay so nothing is processed too quickly.
+							delay = 4;
 						}
 						else
-						{
-							rMenus[menu].MouseScroll(delta);
-						}
-
-						// Setup the delay so that it slows how many scrolls per second.
-						delay = 4;
-
+							firstFocus = true;
 					}
-					else if (Event.Type == sf::Event::MouseButtonPressed && delay == 0)
-					{
-						// Check what button was clicked.
-						if (Event.MouseButton.Button == sf::Mouse::Button::Right)
-						{
-							menu = rMenus[menu].UnSelect();
-							rMenus[menu].UnSelect();
-						}
-						else if (Event.MouseButton.Button == sf::Mouse::Button::Left)
-						{
-							menu = rMenus[menu].Select();
-						}
-
-						// Setup the delay so nothing is processed too quickly.
-						delay = 4;
-					}
-					else if (Event.Type == sf::Event::Resized)
+					
+					if (Event.Type == sf::Event::Resized)
 					{
 						WindowView = sf::View(sf::FloatRect(0, 0, Event.Size.Width, Event.Size.Height));
 						rMenus[0].SetView(Event.Size.Width, Event.Size.Height);
@@ -178,26 +218,35 @@ int main()
 				if (delay > 0)
 					delay--;
 
-				if (menu != -1)
+				if (firstFocus)
 				{
-					if (menu > 0)
+					if (menu != -1)
 					{
-						for (int i = 0; i < menu; i++)
+						if (menu > 0)
 						{
-							rMenus[i].Draw(App, true);
+							for (int i = 0; i < menu; i++)
+							{
+								rMenus[i].Draw(App, true);
+							}
 						}
-					}
 
-					rMenus[menu].Draw(App);
+						rMenus[menu].Draw(App);
 				
-					sprites[1].SetRotation((-(rMenus[menu].GetSelectedIndex() * PI * 2 / rMenus[menu].GetTotalItems()) + (PI / 2)) / PI * 180);
-					App.Draw(sprites[0]);
-					App.Draw(sprites[1]);
+						sprites[1].SetRotation((-(rMenus[menu].GetSelectedIndex() * PI * 2 / rMenus[menu].GetTotalItems()) + (PI / 2)) / PI * 180);
+						App.Draw(sprites[0]);
+						App.Draw(sprites[1]);
+					}
+				}
+				else
+				{
+					App.Draw(text);
 				}
 
 				// Display window on screen
 				App.Display();
 			}
+
+			std::cout << "Closed window. Destroying loaded memory." << std::endl;
 		}
 
 		// Write a blank line so we don't run over something.

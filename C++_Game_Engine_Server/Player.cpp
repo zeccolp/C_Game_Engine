@@ -66,3 +66,70 @@ void Player::SetPosition(sf::Vector2f position)
 {
 	mPosition = position;
 }
+
+int Player::GetDirection()
+{
+	return mDirection;
+}
+
+void Player::SetDirection(int direction)
+{
+	mDirection = direction;
+}
+
+int Player::GetSprite()
+{
+	return mSprite;
+}
+
+void Player::SetSprite(int sprite)
+{
+	mSprite = sprite;
+}
+
+void Player::LoadFromFile(FileStream& fileStream)
+{
+	fileStream.ReadString(this->mName);
+	fileStream.ReadString(this->mPassword);
+	fileStream.ReadString(this->mEmail);
+	fileStream.ReadInt(this->mSprite);
+	fileStream.ReadInt(this->mDirection);
+	fileStream.ReadFloat(this->mPosition.x);
+	fileStream.ReadFloat(this->mPosition.y);
+}
+
+void Player::SaveToFile(FileStream& fileStream)
+{
+	fileStream.WriteString(this->mName);
+	fileStream.WriteString(this->mPassword);
+	fileStream.WriteString(this->mEmail);
+	fileStream.WriteInt(this->mSprite);
+	fileStream.WriteInt(this->mDirection);
+	fileStream.WriteFloat(this->mPosition.x);
+	fileStream.WriteFloat(this->mPosition.y);
+}
+
+void Player::SetName(std::string name)
+{
+	this->mName = name;
+}
+
+void Player::SetPassword(std::string password)
+{
+	this->mPassword = password;
+}
+
+void Player::SetEmail(std::string email)
+{
+	this->mEmail = email;
+}
+
+std::string Player::GetName()
+{
+	return this->mName;
+}
+
+std::string Player::GetPassword()
+{
+	return this->mPassword;
+}

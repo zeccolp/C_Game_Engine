@@ -103,3 +103,13 @@ void Player::Move(int direction, ClientNetwork& network)
 		mLastSignal = 30;
 	}
 }
+
+void Player::SetName(std::string name)
+{
+	this->mName = name;
+}
+
+std::string Player::GetName()
+{
+	return this->mName;
+}

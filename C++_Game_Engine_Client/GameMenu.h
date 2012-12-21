@@ -16,9 +16,8 @@ class GameMenu : public Menu
 		GameMenu();
 		GameMenu(sf::Font font);
 		void SetFont(sf::Font font);
-		Menu::NewMenu RunIteration(sf::RenderWindow &App, ClientNetwork &network);
+		Menu::NewMenu RunIteration(sf::RenderWindow &App, ClientNetwork &network, Player& player);
 	private:
 		sf::Font mFont;
-		Player mMainPlayer;
 		sf::String mText;
 };

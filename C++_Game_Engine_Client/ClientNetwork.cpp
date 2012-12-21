@@ -90,16 +90,18 @@ bool ClientNetwork::IsAlive()
 bool ClientNetwork::Receive(Player& player, bool trueOnNoData)
 {
 	// Setup our Packet and status.
-	sf::Packet receive;
+	GeneralPacket receive;
 	sf::Socket::Status status = mClient.Receive(receive);
 
 	// Check if anything was recieved
 	if (status == sf::Socket::Status::Done)
 	{
 		// Process packet logic here
-		sf::Int8 packetID;
+		sf::Uint8 packetID;
 		receive >> packetID;
+		bool wasValid = false;
 
+		// Find out what packet it was, and do stuff accordingly.
 		switch (packetID)
 		{
 			case S_LocationUpdate:
@@ -108,6 +110,16 @@ bool ClientNetwork::Receive(Player& player, bool trueOnNoData)
 				receive >> x >> y;
 				player.SetRealPosition(sf::Vector2f(x, y));
 				std::cout << x << y;
+				break;
+			case S_Login:
+				receive >> wasValid;
+				if (wasValid)
+					receive >> player;
+				break;
+			case S_Register:
+				receive >> wasValid;
+				if (wasValid)
+					receive >> player;
 				break;
 		}
 
@@ -163,4 +175,9 @@ bool ClientNetwork::SendPacket(sf::Packet packet, bool falseOnDisconnectOnly)
 
 	// Clearly it worked, or we're not reporting on the failure it had.
 	return true;
+}
+
+void ClientNetwork::Close()
+{
+	mClient.Close();
 }

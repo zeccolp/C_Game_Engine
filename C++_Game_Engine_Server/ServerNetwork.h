@@ -8,16 +8,17 @@
 
 #pragma once
 #include "Player.h"
+#include "GeneralPacket.h"
 
 class ServerNetwork
 {
 	public:
-		enum PacketType { C_KeepAlive = 0, S_KeepAlive, C_BlankPacket, S_BlankPacket, C_LocationUpdate, S_LocationUpdate };
+		enum PacketType { C_KeepAlive = 0, S_KeepAlive, C_BlankPacket, S_BlankPacket, C_LocationUpdate, S_LocationUpdate, C_Login, S_Login, C_Register, S_Register };
 
 		ServerNetwork(int port);
 		~ServerNetwork();
 		void RunIteration(Player* players, int playerCount);
-		void Packet(PacketType packetType, Player& player, sf::Packet buffer);
+		void Packet(PacketType packetType, Player& player, GeneralPacket buffer);
 	private:
 		sf::SocketTCP mListener;
 };

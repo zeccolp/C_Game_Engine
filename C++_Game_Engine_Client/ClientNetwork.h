@@ -9,11 +9,12 @@
 #pragma once
 #include "Player.h"
 #include "SFML\Network.hpp"
+#include "GeneralPacket.h"
 
 class ClientNetwork
 {
 	public:
-		enum PacketType { C_KeepAlive = 0, S_KeepAlive, C_BlankPacket, S_BlankPacket, C_LocationUpdate, S_LocationUpdate };
+		enum PacketType { C_KeepAlive = 0, S_KeepAlive, C_BlankPacket, S_BlankPacket, C_LocationUpdate, S_LocationUpdate, C_Login, S_Login, C_Register, S_Register };
 
 		ClientNetwork(int port, sf::IPAddress ipAddress, int keepaliveDelay = 1000); // Default Keep-Alives Delay set to 1000ms.
 		~ClientNetwork();
@@ -23,6 +24,7 @@ class ClientNetwork
 		bool Receive(Player& player, bool trueOnNoData = false);
 		bool SendPacket(PacketType code, bool falseOnDisconnectOnly = false);
 		bool SendPacket(sf::Packet packet, bool falseOnDisconnectOnly = false);
+		void Close();
 	private:
 		clock_t mLastKeepalive;
 		sf::SocketTCP mClient;

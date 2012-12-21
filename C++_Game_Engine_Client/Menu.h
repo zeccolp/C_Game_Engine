@@ -10,6 +10,7 @@
 #include "SFML\Window.hpp"
 #include "SFML\Graphics.hpp"
 #include "ClientNetwork.h"
+#include "GeneralPacket.h"
 
 class Menu
 {
@@ -22,6 +23,6 @@ class Menu
 		// Putting = 0; makes it a pure virtual call. This means that all base classes MUST INCLUDE THESE FUNCTIONS or they get a error
 		// But this actual class does not have these functions so it cannot be Called.
 		virtual void SetFont(sf::Font font) = 0;
-		virtual NewMenu RunIteration(sf::RenderWindow &App, ClientNetwork &network) = 0;
+		virtual NewMenu RunIteration(sf::RenderWindow &App, ClientNetwork &network, Player& player) = 0;
 	private:
 };

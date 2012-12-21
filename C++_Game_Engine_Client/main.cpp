@@ -20,6 +20,7 @@
 #include "MainMenu.h"
 #include "GameMenu.h"
 #include "InputHandler.h"
+#include "Map.h"
 
 int main()
 {
@@ -83,7 +84,7 @@ int main()
 		inputHandler.RunIteration(App);
 
 		// This should call the MainMenu::RunIteration(sf::RenderWindow, ClientNetwork) or the GameMenu::RunIteration(sf::RenderWindow, ClientNetwork) as appropriate.
-		Menu::NewMenu newMenu = menu->RunIteration(App, network);
+		Menu::NewMenu newMenu = menu->RunIteration(App, network, player);
 
 		// If the menu we are going to is not the same as where we are, let's do stuff.
 		if (newMenu != menuName)

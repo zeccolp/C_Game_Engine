@@ -44,6 +44,11 @@ MainMenu::MainMenu(sf::Font font)
 
 	// We're at the MainMenu, I hope.
 	mMenuAction = MenuAction::M_MainMenu;
+
+	this->mWaitingOnNetwork = false;
+	this->mUsernameAct = "Elliott";
+	this->mPasswordAct = "Password";
+	this->mEmailAct = "Email";
 }
 
 void MainMenu::SetFont(sf::Font font)
@@ -52,7 +57,7 @@ void MainMenu::SetFont(sf::Font font)
 	this->mFont = font;
 }
 
-Menu::NewMenu MainMenu::RunIteration(sf::RenderWindow &App, ClientNetwork &network)
+Menu::NewMenu MainMenu::RunIteration(sf::RenderWindow &App, ClientNetwork &network, Player& player)
 {
 	// Get a reference to the input manager associated to our window, and store it for later use
 	const sf::Input& Input = App.GetInput();
@@ -62,6 +67,30 @@ Menu::NewMenu MainMenu::RunIteration(sf::RenderWindow &App, ClientNetwork &netwo
 	unsigned int MouseY          = Input.GetMouseY();
 	bool MouseLeftClick          = Input.IsMouseButtonDown(sf::Mouse::Left);
 	bool MouseRightClick         = Input.IsMouseButtonDown(sf::Mouse::Right);
+
+	// Check if we are waiting on the network.
+	if (this->mWaitingOnNetwork)
+	{
+		// We are, see if we have a packet.
+		if (network.Receive(player))
+		{
+			// We do. No matter what it is we're done waiting.
+			this->mWaitingOnNetwork = false;
+
+			// If the players name was not set, return to the game menu.
+			if (player.GetName() != "")
+				return Menu::NewMenu::M_GameMenu;
+
+			// Otherwise, there was no name set, set the response to say error.
+			this->mResponse.SetPosition(0, 0);
+			this->mResponse.SetText("There was an error processing your request!");
+			this->mDisplayResponse = true;
+		}
+	}
+
+	// If we're displaying the response, display it.
+	if (this->mDisplayResponse)
+		App.Draw(this->mResponse);
 
 	// What menu are we in?
 	if (mMenuAction == MenuAction::M_MainMenu)
@@ -73,25 +102,28 @@ Menu::NewMenu MainMenu::RunIteration(sf::RenderWindow &App, ClientNetwork &netwo
 		// Reset the active input.
 		mActiveInput = 0;
 
-		// Did we click?
-		if (MouseLeftClick == true)
+		if (!this->mWaitingOnNetwork)
 		{
-			// Yes, get the position of the Login and Register buttons.
-			sf::FloatRect lRect = this->mLoginButton.GetRect();
-			sf::FloatRect rRect = this->mRegisterButton.GetRect();
+			// Did we click?
+			if (MouseLeftClick == true)
+			{
+				// Yes, get the position of the Login and Register buttons.
+				sf::FloatRect lRect = this->mLoginButton.GetRect();
+				sf::FloatRect rRect = this->mRegisterButton.GetRect();
 
-			// Find out if we were in either of them.
-			if (MouseX >= lRect.Left && MouseX <= lRect.Right &&
-				MouseY >= lRect.Top && MouseY <= lRect.Bottom)
-			{
-				// We were in the Login Button.
-				mMenuAction = MenuAction::M_Login;
-			}
-			else if (MouseX >= rRect.Left && MouseX <= rRect.Right &&
-				MouseY >= rRect.Top && MouseY <= rRect.Bottom)
-			{
-				// We were in the Register Button.
-				mMenuAction = MenuAction::M_Register;
+				// Find out if we were in either of them.
+				if (MouseX >= lRect.Left && MouseX <= lRect.Right &&
+					MouseY >= lRect.Top && MouseY <= lRect.Bottom)
+				{
+					// We were in the Login Button.
+					mMenuAction = MenuAction::M_Login;
+				}
+				else if (MouseX >= rRect.Left && MouseX <= rRect.Right &&
+					MouseY >= rRect.Top && MouseY <= rRect.Bottom)
+				{
+					// We were in the Register Button.
+					mMenuAction = MenuAction::M_Register;
+				}
 			}
 		}
 	}
@@ -133,39 +165,56 @@ Menu::NewMenu MainMenu::RunIteration(sf::RenderWindow &App, ClientNetwork &netwo
 		// Draw our Buttons.
 		App.Draw(this->mActionButton);
 		App.Draw(this->mCancelButton);
-
-		// Did we click?
-		if (MouseLeftClick == true)
+		
+		if (!this->mWaitingOnNetwork)
 		{
-			// Yes, get the position of the Login and Register buttons.
-			sf::FloatRect aRect = this->mActionButton.GetRect();
-			sf::FloatRect cRect = this->mCancelButton.GetRect();
-			sf::FloatRect uRect = this->mUsername.GetRect();
-			sf::FloatRect pRect = this->mPassword.GetRect();
+			// Did we click?
+			if (MouseLeftClick == true)
+			{
+				// Yes, get the position of the Login and Register buttons.
+				sf::FloatRect aRect = this->mActionButton.GetRect();
+				sf::FloatRect cRect = this->mCancelButton.GetRect();
+				sf::FloatRect uRect = this->mUsername.GetRect();
+				sf::FloatRect pRect = this->mPassword.GetRect();
 
-			// Find out if we were in either of them.
-			if (MouseX >= aRect.Left && MouseX <= aRect.Right &&
-				MouseY >= aRect.Top && MouseY <= aRect.Bottom)
-			{
-				// We were in the Action Button.
-			}
-			else if (MouseX >= cRect.Left && MouseX <= cRect.Right &&
-				MouseY >= cRect.Top && MouseY <= cRect.Bottom)
-			{
-				// We were in the Cancel Button.
-				mMenuAction = MenuAction::M_MainMenu;
-			}
-			else if (MouseX >= uRect.Left && MouseX <= uRect.Right &&
-				MouseY >= uRect.Top && MouseY <= uRect.Bottom)
-			{
-				// We were in the Username
-				mActiveInput = 0;
-			}
-			else if (MouseX >= pRect.Left && MouseX <= pRect.Right &&
-				MouseY >= pRect.Top && MouseY <= pRect.Bottom)
-			{
-				// We were in the Password
-				mActiveInput = 1;
+				// Find out if we were in either of them.
+				if (MouseX >= aRect.Left && MouseX <= aRect.Right &&
+					MouseY >= aRect.Top && MouseY <= aRect.Bottom)
+				{
+					// We were in the Action Button. Create a packet.
+					GeneralPacket packet;
+
+					// Write a login packet.
+					sf::Uint8 pCode = ClientNetwork::PacketType::C_Login;
+					packet << pCode << this->mUsernameAct << this->mPasswordAct;
+
+					// Connect to the network.
+					if (network.Connect())
+					{
+						// Send the login packet, wait for the network.
+						network.SendPacket(packet, false);
+						this->mWaitingOnNetwork = true;
+					}
+				}
+				else if (MouseX >= cRect.Left && MouseX <= cRect.Right &&
+					MouseY >= cRect.Top && MouseY <= cRect.Bottom)
+				{
+					// We were in the Cancel Button.
+					mMenuAction = MenuAction::M_MainMenu;
+					this->mDisplayResponse = false;
+				}
+				else if (MouseX >= uRect.Left && MouseX <= uRect.Right &&
+					MouseY >= uRect.Top && MouseY <= uRect.Bottom)
+				{
+					// We were in the Username
+					mActiveInput = 0;
+				}
+				else if (MouseX >= pRect.Left && MouseX <= pRect.Right &&
+					MouseY >= pRect.Top && MouseY <= pRect.Bottom)
+				{
+					// We were in the Password
+					mActiveInput = 1;
+				}
 			}
 		}
 	}
@@ -213,49 +262,67 @@ Menu::NewMenu MainMenu::RunIteration(sf::RenderWindow &App, ClientNetwork &netwo
 		// Draw our Buttons.
 		App.Draw(this->mActionButton);
 		App.Draw(this->mCancelButton);
-
-		// Did we click?
-		if (MouseLeftClick == true)
+		
+		if (!this->mWaitingOnNetwork)
 		{
-			// Yes, get the position of the Login and Register buttons.
-			sf::FloatRect aRect = this->mActionButton.GetRect();
-			sf::FloatRect cRect = this->mCancelButton.GetRect();
-			sf::FloatRect uRect = this->mUsername.GetRect();
-			sf::FloatRect pRect = this->mPassword.GetRect();
-			sf::FloatRect eRect = this->mEmail.GetRect();
+			// Did we click?
+			if (MouseLeftClick == true)
+			{
+				// Yes, get the position of the Login and Register buttons.
+				sf::FloatRect aRect = this->mActionButton.GetRect();
+				sf::FloatRect cRect = this->mCancelButton.GetRect();
+				sf::FloatRect uRect = this->mUsername.GetRect();
+				sf::FloatRect pRect = this->mPassword.GetRect();
+				sf::FloatRect eRect = this->mEmail.GetRect();
 
-			// Find out if we were in either of them.
-			if (MouseX >= aRect.Left && MouseX <= aRect.Right && 
-				MouseY >= aRect.Top && MouseY <= aRect.Bottom)
-			{
-				// We were in the Action Button.
-			}
-			else if (MouseX >= cRect.Left && MouseX <= cRect.Right &&
-				MouseY >= cRect.Top && MouseY <= cRect.Bottom)
-			{
-				// We were in the Cancel Button.
-				mMenuAction = MenuAction::M_MainMenu;
-			}
-			else if (MouseX >= uRect.Left && MouseX <= uRect.Right &&
-				MouseY >= uRect.Top && MouseY <= uRect.Bottom)
-			{
-				// We were in the Username
-				mActiveInput = 0;
-			}
-			else if (MouseX >= pRect.Left && MouseX <= pRect.Right &&
-				MouseY >= pRect.Top && MouseY <= pRect.Bottom)
-			{
-				// We were in the Password
-				mActiveInput = 1;
-			}
-			else if (MouseX >= eRect.Left && MouseX <= eRect.Right &&
-				MouseY >= eRect.Top && MouseY <= eRect.Bottom)
-			{
-				// We were in the Email
-				mActiveInput = 2;
+				// Find out if we were in either of them.
+				if (MouseX >= aRect.Left && MouseX <= aRect.Right && 
+					MouseY >= aRect.Top && MouseY <= aRect.Bottom)
+				{
+					// We were in the Action Button. Create a packet.
+					GeneralPacket packet;
+
+					// Write a register packet.
+					sf::Uint8 pCode = ClientNetwork::PacketType::C_Register;
+					packet << pCode << this->mUsernameAct << this->mPasswordAct << this->mEmailAct;
+
+					// Connect to the network.
+					if (network.Connect())
+					{
+						// Send a register packet, wait on the network.
+						network.SendPacket(packet, false);
+						this->mWaitingOnNetwork = true;
+					}
+				}
+				else if (MouseX >= cRect.Left && MouseX <= cRect.Right &&
+					MouseY >= cRect.Top && MouseY <= cRect.Bottom)
+				{
+					// We were in the Cancel Button.
+					mMenuAction = MenuAction::M_MainMenu;
+					this->mDisplayResponse = false;
+				}
+				else if (MouseX >= uRect.Left && MouseX <= uRect.Right &&
+					MouseY >= uRect.Top && MouseY <= uRect.Bottom)
+				{
+					// We were in the Username
+					mActiveInput = 0;
+				}
+				else if (MouseX >= pRect.Left && MouseX <= pRect.Right &&
+					MouseY >= pRect.Top && MouseY <= pRect.Bottom)
+				{
+					// We were in the Password
+					mActiveInput = 1;
+				}
+				else if (MouseX >= eRect.Left && MouseX <= eRect.Right &&
+					MouseY >= eRect.Top && MouseY <= eRect.Bottom)
+				{
+					// We were in the Email
+					mActiveInput = 2;
+				}
 			}
 		}
 	}
-
+	
+	// Nothing happened, return to the main menu.
 	return Menu::M_MainMenu;
 }

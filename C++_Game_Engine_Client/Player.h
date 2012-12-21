@@ -24,7 +24,10 @@ class Player
 		void SetDirection(int direction);
 		void Update();
 		void Move(int direction, ClientNetwork& network);
+		void SetName(std::string name);
+		std::string GetName();
 	private:
+		std::string mName;
 		sf::Vector2f mRealPos;
 		sf::Vector2f mDispPos;
 		int mSprite;

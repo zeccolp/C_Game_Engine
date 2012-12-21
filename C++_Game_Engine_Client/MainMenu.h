@@ -17,7 +17,7 @@ class MainMenu : public Menu
 		MainMenu();
 		MainMenu(sf::Font font);
 		void SetFont(sf::Font font);
-		Menu::NewMenu RunIteration(sf::RenderWindow &App, ClientNetwork &network);
+		Menu::NewMenu RunIteration(sf::RenderWindow &App, ClientNetwork &network, Player& player);
 	private:
 		sf::String mLoginButton;
 		sf::String mRegisterButton;
@@ -34,4 +34,6 @@ class MainMenu : public Menu
 		std::string mPasswordAct;
 		std::string mEmailAct;
 		int mActiveInput;
+		bool mWaitingOnNetwork;
+		bool mDisplayResponse;
 };

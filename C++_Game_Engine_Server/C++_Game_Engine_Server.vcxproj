@@ -72,11 +72,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="FileStream.cpp" />
+    <ClCompile Include="GeneralPacket.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="ServerNetwork.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="FileStream.h" />
+    <ClInclude Include="GeneralPacket.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="ServerNetwork.h" />
   </ItemGroup>
