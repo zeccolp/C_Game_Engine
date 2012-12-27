@@ -49,6 +49,8 @@ MainMenu::MainMenu(sf::Font font)
 	this->mUsernameAct = "Elliott";
 	this->mPasswordAct = "Password";
 	this->mEmailAct = "Email";
+
+	this->mInputHandle = InputHandler();
 }
 
 void MainMenu::SetFont(sf::Font font)
@@ -67,6 +69,11 @@ Menu::NewMenu MainMenu::RunIteration(sf::RenderWindow &App, ClientNetwork &netwo
 	unsigned int MouseY          = Input.GetMouseY();
 	bool MouseLeftClick          = Input.IsMouseButtonDown(sf::Mouse::Left);
 	bool MouseRightClick         = Input.IsMouseButtonDown(sf::Mouse::Right);
+
+	this->mInputHandle.RunIteration(App);
+	this->mUsername.SetText(("Username: " + this->mUsernameAct));
+	this->mPassword.SetText(("Password: " + this->mPasswordAct));
+	this->mEmail.SetText(("Email: " + this->mEmailAct));
 
 	// Check if we are waiting on the network.
 	if (this->mWaitingOnNetwork)
@@ -216,6 +223,11 @@ Menu::NewMenu MainMenu::RunIteration(sf::RenderWindow &App, ClientNetwork &netwo
 					mActiveInput = 1;
 				}
 			}
+				
+			if (this->mActiveInput == 0)
+				this->mUsernameAct = this->mInputHandle.ProcessInput(this->mUsernameAct);
+			else if (this->mActiveInput == 1)
+				this->mPasswordAct = this->mInputHandle.ProcessInput(this->mPasswordAct, false, false, true);
 		}
 	}
 	else if (mMenuAction == MenuAction::M_Register)
@@ -320,6 +332,13 @@ Menu::NewMenu MainMenu::RunIteration(sf::RenderWindow &App, ClientNetwork &netwo
 					mActiveInput = 2;
 				}
 			}
+
+			if (this->mActiveInput == 0)
+				this->mUsernameAct = this->mInputHandle.ProcessInput(this->mUsernameAct);
+			else if (this->mActiveInput == 1)
+				this->mPasswordAct = this->mInputHandle.ProcessInput(this->mPasswordAct, false, false, true);
+			else if (this->mActiveInput == 2)
+				this->mEmailAct = this->mInputHandle.ProcessInput(this->mEmailAct, false, false, true);
 		}
 	}
 	

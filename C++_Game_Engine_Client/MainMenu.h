@@ -8,6 +8,7 @@
 
 #pragma once
 #include "Menu.h"
+#include "InputHandler.h"
 
 class MainMenu : public Menu
 {
@@ -36,4 +37,5 @@ class MainMenu : public Menu
 		int mActiveInput;
 		bool mWaitingOnNetwork;
 		bool mDisplayResponse;
+		InputHandler mInputHandle;
 };
