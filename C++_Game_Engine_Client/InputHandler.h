@@ -9,14 +9,17 @@
 #pragma once
 #include "SFML\Window.hpp"
 #include "SFML\Graphics.hpp"
+#include <string>
 
 class InputHandler
 {
 	public:
 		InputHandler();
 		void RunIteration(sf::RenderWindow& App);
-		bool MouseLeftClick();
-		bool MouseRightClick();
+		bool MouseLeftClicked();
+		bool MouseRightClicked();
+		bool KeyTyped(sf::Key::Code code);
+		std::string ProcessInput(std::string text, bool allowNewlines = false, bool allowSpaces = false, bool allowSymbols = false);
 	private:
 		bool mMouseLeftClick;
 		bool mPrevMouseLeftClick;
