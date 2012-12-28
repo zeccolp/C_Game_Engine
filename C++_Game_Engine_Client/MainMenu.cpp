@@ -112,7 +112,7 @@ Menu::NewMenu MainMenu::RunIteration(sf::RenderWindow &App, ClientNetwork &netwo
 		if (!this->mWaitingOnNetwork)
 		{
 			// Did we click?
-			if (MouseLeftClick == true)
+			if (this->mInputHandle.MouseLeftClicked())
 			{
 				// Yes, get the position of the Login and Register buttons.
 				sf::FloatRect lRect = this->mLoginButton.GetRect();
@@ -176,7 +176,7 @@ Menu::NewMenu MainMenu::RunIteration(sf::RenderWindow &App, ClientNetwork &netwo
 		if (!this->mWaitingOnNetwork)
 		{
 			// Did we click?
-			if (MouseLeftClick == true)
+			if (this->mInputHandle.MouseLeftClicked())
 			{
 				// Yes, get the position of the Login and Register buttons.
 				sf::FloatRect aRect = this->mActionButton.GetRect();
@@ -278,7 +278,7 @@ Menu::NewMenu MainMenu::RunIteration(sf::RenderWindow &App, ClientNetwork &netwo
 		if (!this->mWaitingOnNetwork)
 		{
 			// Did we click?
-			if (MouseLeftClick == true)
+			if (this->mInputHandle.MouseLeftClicked())
 			{
 				// Yes, get the position of the Login and Register buttons.
 				sf::FloatRect aRect = this->mActionButton.GetRect();
