@@ -7,6 +7,7 @@
  */
 
 #pragma once
+#include <SFML/Graphics.hpp>
 class ClientNetwork;
 
 class Player
@@ -30,6 +31,8 @@ class Player
 		std::string mName;
 		sf::Vector2f mRealPos;
 		sf::Vector2f mDispPos;
+		sf::Image mSpriteImage;
+		sf::Sprite mSpriteTile;
 		int mSprite;
 		int mDirection;
 		int mLastSignal;

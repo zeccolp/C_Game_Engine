@@ -15,6 +15,7 @@
 #include "SFML\System.hpp"
 #include "SFML\Window.hpp"
 #include "RadialMenu.h"
+#include "../C++_Game_Engine_Client/Map.h"
 
 #define PI 3.14159265358979323846
 
@@ -35,6 +36,16 @@ int main()
 
 		if (nextItem == 1)
 		{
+			// Setup and prompt for map size.
+			int width, height, layers;
+			std::cout << "Enter map size (Width Height Layers) then press enter: ";
+			std::cin >> width >> height >> layers;
+
+			// Create the map.
+			std::cout << "Creating map of size " << width << "W, " << height << "H, " << layers << "ML, " << layers << "FL." << std::endl;
+			Map thisMap(width, height, (layers * 2));
+
+			// Tell them we're creating the window.
 			std::cout << "Creating window." << std::endl;
 
 			// Create the main window
@@ -51,6 +62,7 @@ int main()
 			std::cout << "Window created. Loading memory." << std::endl;
 
 			// Create our variables.
+			bool inMenu = true;
 			int menu = -1;
 			int delay = 0;
 
@@ -86,6 +98,16 @@ int main()
 			}
 			image.SetSmooth(false);
 
+			// Create the current property and sub-layer.
+			unsigned int currentProperty = 0;
+			unsigned int currentSubLayer = 0;
+
+			// Create the currently selected tile.
+			unsigned int currentTile = 15;
+
+			// Create the current non-menu menu.
+			unsigned short int currentNonMenu = 0;
+
 			// Create our array of sprites.
 			sf::Sprite sprites[2];
 
@@ -113,9 +135,16 @@ int main()
 				}
 				else if (i == 1)
 				{
-					rMenus[i] = RadialMenu(5);
-					sf::IntRect rectangles[5] = {sf::IntRect(32, 0, 64, 32), sf::IntRect(32, 32, 64, 64), sf::IntRect(32, 64, 64, 96), sf::IntRect(32, 96, 64, 128), sf::IntRect(32, 128, 64, 160)};
-					int goToMenu[5] = {2, 2, 2, 2, 2};
+					rMenus[i] = RadialMenu(layers);
+
+					sf::IntRect * rectangles = new sf::IntRect[layers];
+					int * goToMenu = new int[layers];
+					for (int l = 0; l < layers; l++)
+					{
+						rectangles[l] = sf::IntRect(32, 32 * l, 64, 32 + 32 * l);
+						goToMenu[l] = -1;
+					}
+
 					rMenus[i].SetView(800, 600);
 					rMenus[i].SetMenus(goToMenu, 0);
 					rMenus[i].CreateSprites(rectangles, image);
@@ -124,7 +153,7 @@ int main()
 				{
 					rMenus[i] = RadialMenu(4);
 					sf::IntRect rectangles[4] = {sf::IntRect(0, 0, 32, 32), sf::IntRect(0, 32, 32, 64), sf::IntRect(0, 64, 32, 96), sf::IntRect(0, 96, 32, 128)};
-					int goToMenu[4] = {1, 1, 1, 1};
+					int goToMenu[4] = {1, 1, 1, -1};
 					rMenus[i].SetView(800, 600);
 					rMenus[i].SetMenus(goToMenu, -1);
 					rMenus[i].CreateSprites(rectangles, image);
@@ -151,6 +180,8 @@ int main()
 					if ((Event.Type == sf::Event::KeyPressed) && (Event.Key.Code == sf::Key::Escape))
 						App.Close();
 
+
+
 					// If we moved the wheel within the delay.
 					if ((Event.Type == sf::Event::MouseWheelMoved) && delay == 0)
 					{
@@ -160,12 +191,13 @@ int main()
 							bool delta = Event.MouseWheel.Delta > 0 ? true : false;
 						
 							// Check what menu we are in.
-							if (menu == -1)
+							if (inMenu && menu == -1)
 							{
 								// No menu. Join the main menu.
 								menu = 0;
+								rMenus[menu].UnSelect();
 							}
-							else
+							else if (inMenu)
 							{
 								rMenus[menu].MouseScroll(delta);
 							}
@@ -182,17 +214,47 @@ int main()
 							// Check what button was clicked.
 							if (Event.MouseButton.Button == sf::Mouse::Button::Right)
 							{
-								if (menu > -1)
+								if (inMenu && menu > -1)
 								{
 									menu = rMenus[menu].UnSelect();
 									rMenus[menu].UnSelect();
 								}
+								else if (inMenu)
+								{
+									if (currentProperty >= 1 && currentProperty <= 2)
+									{
+										int mouseX = Input.GetMouseX() / 32;
+										int mouseY = Input.GetMouseY() / 32;
+										
+										if (mouseX >= 0 && mouseX < width && mouseY >= 0 && mouseY < height)
+											thisMap.SetTile(mouseX, mouseY, 0, (currentProperty - 1) * (layers) + currentSubLayer);
+									}
+								}
 							}
 							else if (Event.MouseButton.Button == sf::Mouse::Button::Left)
 							{
-								if (menu > -1)
+								if (inMenu && menu == 0)
 								{
+									currentProperty = rMenus[menu].GetSelectedIndex();
 									menu = rMenus[menu].Select();
+									rMenus[menu].UnSelect();
+								}
+								else if (inMenu && menu == 1)
+								{
+									currentSubLayer = rMenus[menu].GetSelectedIndex();
+									menu = rMenus[menu].Select();
+									rMenus[menu].UnSelect();
+								}
+								else if (inMenu)
+								{
+									if (currentProperty >= 1 && currentProperty <= 2)
+									{
+										int mouseX = Input.GetMouseX() / 32;
+										int mouseY = Input.GetMouseY() / 32;
+
+										if (mouseX >= 0 && mouseX < width && mouseY >= 0 && mouseY < height)
+											thisMap.SetTile(mouseX, mouseY, currentTile, (currentProperty - 1) * (layers) + currentSubLayer);
+									}
 								}
 							}
 
@@ -220,7 +282,10 @@ int main()
 
 				if (firstFocus)
 				{
-					if (menu != -1)
+					// Draw the Map. (Built into the map class. Lucky us! YAY! :D)
+					thisMap.Draw(App);
+
+					if (inMenu && menu != -1)
 					{
 						if (menu > 0)
 						{

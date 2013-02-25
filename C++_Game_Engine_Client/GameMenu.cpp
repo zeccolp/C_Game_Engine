@@ -27,7 +27,7 @@ void GameMenu::SetFont(sf::Font font)
 	mFont = font;
 }
 
-Menu::NewMenu GameMenu::RunIteration(sf::RenderWindow &App, ClientNetwork &network, Player& player)
+Menu::NewMenu GameMenu::RunIteration(sf::RenderWindow &App, ClientNetwork &network, Player &player)
 {
 	// Set the text to our name.
 	this->mText.SetText(player.GetName());

@@ -74,10 +74,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\C++_Game_Engine_Client\InputHandler.cpp" />
+    <ClCompile Include="..\C++_Game_Engine_Client\Map.cpp" />
+    <ClCompile Include="..\C++_Game_Engine_Server\FileStream.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="RadialMenu.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\C++_Game_Engine_Client\InputHandler.h" />
+    <ClInclude Include="..\C++_Game_Engine_Client\Map.h" />
+    <ClInclude Include="..\C++_Game_Engine_Server\FileStream.h" />
     <ClInclude Include="RadialMenu.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

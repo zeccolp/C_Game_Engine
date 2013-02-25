@@ -8,14 +8,22 @@
 
 #include <iostream>
 #include <time.h>
-#include "SFML\Audio.hpp"
-#include "SFML\Config.hpp"
-#include "SFML\Graphics.hpp"
-#include "SFML\Network.hpp"
-#include "SFML\System.hpp"
-#include "SFML\Window.hpp"
+#include "SFML/Audio.hpp"
+#include "SFML/Config.hpp"
+#include "SFML/Graphics.hpp"
+#include "SFML/Network.hpp"
+#include "SFML/System.hpp"
+#include "SFML/Window.hpp"
 #include "ServerNetwork.h"
 #include "Player.h"
+
+#ifdef _WIN32
+#include <windows.h>
+#define SLEEP(x) Sleep(x)   /* Windows version */
+#else
+#include <unistd.h>
+#define SLEEP(x) usleep(x)   /* Linux version */
+#endif
 
 int main()
 {	
@@ -33,7 +41,7 @@ int main()
 		network.RunIteration(players, playerCount);
 
 		// Prevent 100% CPU usage.
-		Sleep(1);
+		SLEEP(1);
 	}
 
 	// End of Programme
